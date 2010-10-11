@@ -1,0 +1,12 @@
+== Stylenik: A graphical editor for mapnik files ==
+
+Load and edit mapnik style files through an online interface, with
+automatic layer ordering, special support for common style elements
+(e.g. highway casing), scale-dependent styles, a color picker, ... etc.
+
+A long term goal is to provide near-realtime previews of styles from a
+server capable of handling multiple simultaneous projects.
+
+Project:   Stylenik
+Copyright: ©2010 Adam Jones.
+
