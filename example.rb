@@ -24,13 +24,13 @@ map.text :water, :fontset_name => :italic, :size => 20, :fill => water_color
 map.polygon :water => :fill => water_color
 
 # using style templates
-map.layer :oceans, :table => 'ocean_labels', :base => dbsettings do |l|
+map.layer(:oceans, :table => 'ocean_labels', :base => dbsettings) do |l|
   # l.rule creates a style rule. acceptable forms are:
-  l.rule :start => 2, :stop => 3, :filter => "filter expression" do |r|
+  l.rule(:start => 2, :stop => 3, :filter => "filter expression") do |r|
     r.text :style => :water
   end
   # can override the style settings with
-  l.rule :start => 3, :stop => 4, :filter => "filter expression" do |r|
+  l.rule(:start => 3, :stop => 4, :filter => "filter expression") do |r|
     r.text :style => :water, :size => 24
   end
   # or a short version, when you're only creating one type of
@@ -48,6 +48,11 @@ map.layer :oceans, :table => 'ocean_labels', :base => dbsettings do |l|
   # prepending "casing_" to normal attributes
 
   l.casing :start => 4, :stop => 5, :filter => "filter expression", :style => :some_line, :casing_width => 15
+  
+end
+
+# shortcut for types on layer definition
+map.postgis :oceans, :table => 'ocean_table' do |l|
   
 end
 
