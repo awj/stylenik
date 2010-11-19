@@ -17,7 +17,7 @@ water_color = "rgb(240, 240, 240)"
 # or let the map object know about them so they can be updated. Just
 # use the symbol and the map object will fill in the default or
 # user-provided value.
-map.var :water_color => "rgb(240, 240, 240)"
+map.var[:water_color] = "rgb(240, 240, 240)"
 
 # defining style templates
 map.text :water, :fontset_name => :italic, :size => 20, :fill => water_color
