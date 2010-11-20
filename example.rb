@@ -5,18 +5,20 @@ map = stylenik.map :bgcolor => "rgb(255,255,255)" :srs => "+proj=latlong +datum=
 # defining fontsets
 map.fontset :regular => ["Fontin Regular", "unifont Medium"]
 
-map.scales [28000000, 14000000, ...]
+# define scales, so you can reference the start/end scale denominators
+# by index.
+map.scales = [28000000, 14000000, ...]
 # or provide first scale only (rest are sequence of 1/2)
 # map.first_scale 28000000
 # or provide first and last scale (fill in middle with sequence of 1/2
-# map.scales 28000000, 1068
+# map.scales_between 28000000, 1068
 
 # can define variables as regular ruby.
 water_color = "rgb(240, 240, 240)"
 
-# or let the map object know about them so they can be updated. Just
-# use the symbol and the map object will fill in the default or
-# user-provided value.
+# or let the map object know about them so they can be modified when
+# the script is called. Just use the symbol and the map object will
+# fill in the default or user-provided value.
 map.var[:water_color] = "rgb(240, 240, 240)"
 
 # defining style templates

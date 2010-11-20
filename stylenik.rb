@@ -1,7 +1,14 @@
 require 'rubygems'
 require 'nokogiri'
 
-class TextSymbolizer
+class Node
+  def is_cased?
+    false
+  end
+end
+
+
+class TextSymbolizer < Node
   attr_accessor :name, :fontset_name, :size, :fill, :halo_radius, :wrap_width
   def initialize(attr)
     @name = attr[:name]
@@ -13,7 +20,7 @@ class TextSymbolizer
   end
 
   def attrs
-    {
+    a = {
       :name => name,
       :fontset_name => fontset_name,
       :size => size,
@@ -21,9 +28,11 @@ class TextSymbolizer
       :halo_radius => halo_radius,
       :wrap_width => wrap_width,
     }
+
+    a.reject {|k,v| v.nil?}
   end
 
-  def generate(xml)
+  def generate(map, xml)
     xml.TextSymbolizer(attrs)
   end
   
@@ -56,10 +65,15 @@ class Rule
     @nodes << n
   end
 
+  def text(attrs)
+    m = {:type => :text}.merge attrs
+    node(m)
+  end
+
   def generate(map, xml)
     xml.Rule do
-      xml.MaxScaleDenominator start unless start.nil?
-      xml.MinScaleDenominator stop  unless stop.nil?
+      xml.MaxScaleDenominator map.scales[start] unless start.nil?
+      xml.MinScaleDenominator map.scales[stop]  unless stop.nil?
       xml.Filter filter unless filter.nil?
 
       nodes.each do |n|
@@ -86,13 +100,24 @@ class Layer
   def gen_rule(filters, block)
     r = Rule.new filters
 
-    # todo run block on rule
+    block.call r
 
-    @rules.append r
+    @rules << r
   end
   
   def rule(filters, &block)
     gen_rule filters, block
+  end
+
+  def text(attrs)
+    ruleset = {}
+    ruleset[:start]  = attrs.delete :start
+    ruleset[:stop]   = attrs.delete :stop
+    ruleset[:filter] = attrs.delete :filter
+
+    rule ruleset do |r|
+      r.text attrs
+    end
   end
 
   def attrs(map)
@@ -104,10 +129,13 @@ class Layer
   end
 
   def generate_styles(map, xml)
-    # TODO handle casings
-    xml.Style do
-      @rules.each { |r| r.generate(map, xml) }
+    # TODO, handle casings
+    xml.Style(:name => name) do
+      @rules.each do |r|
+        r.generate(map, xml)
+      end
     end
+    return [name]
   end
 
   def generate(map, xml)
@@ -116,7 +144,9 @@ class Layer
     # TODO generate styles
     stylenames = generate_styles(map, xml)
     xml.Layer(att) do
-      stylenames.each { |n| xml.StyleName n }
+      stylenames.each do |n|
+        xml.StyleName n
+      end
       xml.Datasource do
         settings.each { |k,v| xml.Parameter({:name => k},v) }
       end
@@ -125,15 +155,30 @@ class Layer
 end
 
 class Map
-  attr_accessor :bgcolor, :srs, :buffer_size, :layers, :styles, :var
+  attr_accessor :bgcolor, :srs, :buffer_size, :layers, :styles, :var, :scales
 
   def initialize(attr)
     @bgcolor     = attr[:bgcolor]
     @srs         = attr[:srs]
     @buffer_size = attr[:buffer_size].to_s
+    @scales      = attr[:scales]
     @styles      = {}
     @layers      = []
     @var         = {}
+  end
+
+  def scales_between(start, stop=1.0, step_div=2.0)
+    scale_arr = []
+    curr      = start
+    while curr > stop
+      scale_arr << curr.to_i
+      curr = curr / step_div
+    end
+    @scales = scale_arr
+  end
+
+  def first_scale(fst)
+    scales_between fst
   end
 
   # layer definitions and shortcuts
