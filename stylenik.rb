@@ -90,6 +90,7 @@ class RuleMaker
     @layer = layer
   end
 
+  # reuse their stop argument if given
   def zoom(num, args)
     ruleattr = {:start => num, :stop => args[:stop] || num + 1, :filter => args[:filter]}
     args.delete :stop
@@ -178,13 +179,14 @@ class Layer
 end
 
 class Map
-  attr_accessor :bgcolor, :srs, :buffer_size, :layers, :styles, :var, :scales
+  attr_accessor :bgcolor, :srs, :buffer_size, :layers, :styles, :var, :scales, :fontsets
 
   def initialize(attr)
     @bgcolor     = attr[:bgcolor]
     @srs         = attr[:srs]
     @buffer_size = attr[:buffer_size].to_s
     @scales      = attr[:scales]
+    @fontsets    = {}
     @styles      = {}
     @layers      = []
     @var         = {}
@@ -204,6 +206,10 @@ class Map
     scales_between fst
   end
 
+  def fontset(settings)
+    @fontsets = fontsets.merge settings
+  end
+
   # layer definitions and shortcuts
   def gen_layer(name, settings, block)
     l = Layer.new name, replace_vars(settings)
@@ -211,7 +217,6 @@ class Map
     block.call l
 
     @layers << l
-    
   end
 
   def layer(name, settings, &block)
@@ -247,6 +252,13 @@ class Map
   def generate
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.Map(attrs) do
+        fontsets.each do |k,v|
+          xml.FontSet(:name => k) do
+            v.each do |name|
+              xml.Font(:face_name => name)
+            end
+          end
+        end
         layers.each { |l| l.generate(self, xml) }
       end
     end
