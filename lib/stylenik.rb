@@ -1,1 +1,3 @@
-require 'stylenik/map'
+module Stylenik
+  # Your code goes here...
+end
