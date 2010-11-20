@@ -1,4 +1,4 @@
-require 'rule'
+require 'stylenik/rule'
 
 class RuleMaker
   attr_accessor :type, :layer

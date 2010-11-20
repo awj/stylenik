@@ -1,4 +1,4 @@
-require 'symbolizers'
+require 'stylenik/symbolizers'
 
 class Rule
   attr_accessor :start, :stop, :filter, :nodes

@@ -1,3 +1,3 @@
 module Stylenik
-  # Your code goes here...
+  require 'stylenik/map'
 end

@@ -1,7 +1,7 @@
-require 'rubygems'
+# require 'rubygems'
 require 'nokogiri'
 
-require 'layer'
+require 'stylenik/layer'
 
 class Map
   attr_accessor :bgcolor, :srs, :buffer_size, :layers, :styles, :var, :scales, :fontsets

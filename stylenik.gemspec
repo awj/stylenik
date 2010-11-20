@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Adam Jones"]
   s.email       = ["ajones1@gmail.com"]
   s.homepage    = "http://github.com/awj/stylenik"
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = "Programmatic style creation for mapnik"
+  s.description = "Programmatic style creation for mapnik"
 
   s.rubyforge_project = "stylenik"
 
@@ -17,4 +17,5 @@ Gem::Specification.new do |s|
 #   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
 #   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
+  s.add_dependency "nokogiri"
 end
