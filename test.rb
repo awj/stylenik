@@ -6,6 +6,9 @@ m.first_scale 280000000
 
 m.fontset :regular => ["Fontin Regular", "unifont Medium"]
 
+water_color = "rgb(240, 240, 240)"
+m.text :water, :fontset_name => :italic, :size => 20, :fill => water_color
+
 m.var[:postgres_user] = 'dummy'
 
 m.postgis :test, :table => "gis", :user => :postgers_user do |l|

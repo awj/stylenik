@@ -5,11 +5,19 @@ class Node
   def is_cased?
     false
   end
+
+  def apply_style(map, name, bonus_attrs)
+    raise "Someone forgot to provide a type tag for this symbolizer, #{self}" if @type.nil?
+    res = map.styles[@type][name] || {}
+    filtered_attrs = bonus_attrs.reject {|k,v| v.nil?}
+    filtered_res   = res.reject {|k,v| v.nil?}
+    return filtered_res.merge(filtered_attrs)
+  end
 end
 
 
 class TextSymbolizer < Node
-  attr_accessor :name, :fontset_name, :size, :fill, :halo_radius, :wrap_width
+  attr_accessor :name, :fontset_name, :size, :fill, :halo_radius, :wrap_width, :style
   def initialize(attr)
     @name = attr[:name]
     @fontset_name = attr[:fontset_name]
@@ -17,9 +25,11 @@ class TextSymbolizer < Node
     @fill = attr[:fill]
     @halo_radius = attr[:halo_radius]
     @wrap_width = attr[:wrap_width]
+    @type = :text
+    @style = attr[:style]
   end
 
-  def attrs
+  def attrs(map=nil)
     a = {
       :name => name,
       :fontset_name => fontset_name,
@@ -29,11 +39,12 @@ class TextSymbolizer < Node
       :wrap_width => wrap_width,
     }
 
-    a.reject {|k,v| v.nil?}
+    res = apply_style(map, style, a)
+    return res.reject {|k,v| v.nil?}
   end
 
   def generate(map, xml)
-    xml.TextSymbolizer(attrs)
+    xml.TextSymbolizer(attrs(map))
   end
   
 end
@@ -187,7 +198,7 @@ class Map
     @buffer_size = attr[:buffer_size].to_s
     @scales      = attr[:scales]
     @fontsets    = {}
-    @styles      = {}
+    @styles      = {:text => {}, :polygon => {}}
     @layers      = []
     @var         = {}
   end
@@ -208,6 +219,11 @@ class Map
 
   def fontset(settings)
     @fontsets = fontsets.merge settings
+  end
+
+  # style templates
+  def text(name, attrs)
+    @styles[:text][name] = attrs
   end
 
   # layer definitions and shortcuts
