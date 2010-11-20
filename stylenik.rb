@@ -83,6 +83,24 @@ class Rule
   end
 end
 
+class RuleMaker
+  attr_accessor :type, :layer
+  def initialize(type, layer)
+    @type  = type
+    @layer = layer
+  end
+
+  def zoom(num, args)
+    ruleattr = {:start => num, :stop => args[:stop] || num + 1, :filter => args[:filter]}
+    args.delete :stop
+    args.delete :filter
+    args[:type] ||= @type
+    layer.rule(ruleattr) do |r|
+      r.node(args)
+    end
+  end
+end
+
 class Layer
   attr_accessor :name, :status, :srs, :settings, :rules
   def initialize(name, the_settings)
@@ -109,14 +127,19 @@ class Layer
     gen_rule filters, block
   end
 
-  def text(attrs)
-    ruleset = {}
-    ruleset[:start]  = attrs.delete :start
-    ruleset[:stop]   = attrs.delete :stop
-    ruleset[:filter] = attrs.delete :filter
+  def text(attrs=nil, &block)
+    if attrs
+      ruleset = {}
+      ruleset[:start]  = attrs.delete :start
+      ruleset[:stop]   = attrs.delete :stop
+      ruleset[:filter] = attrs.delete :filter
 
-    rule ruleset do |r|
-      r.text attrs
+      rule ruleset do |r|
+        r.text attrs
+      end
+    else
+      r = RuleMaker.new :text, self
+      block.call r
     end
   end
 
