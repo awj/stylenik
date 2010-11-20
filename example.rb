@@ -40,8 +40,8 @@ map.layer(:oceans, :table => 'ocean_labels', :base => dbsettings) do |l|
   l.text :start => 4, :stop => 5, :filter => "filter expression", :style => :water
   # shorthand once-per-zoom definitions
   l.text do |r|
-    r.zoom 2, :filter => "filter expression", :style => :water
-    r.zoom 3, :stop => 5, :filter => "filter expression", :style => :water, :size => 24
+    r.zoom 2, :style => :water, :size => 20
+    r.zoom 3, :stop => 5, :style => :water, :size => 24
   end
 
   # short hand for road casings. Results in two layers, one with just
