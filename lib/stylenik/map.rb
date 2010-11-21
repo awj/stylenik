@@ -77,6 +77,9 @@ class Map
           $stderr.puts "Undefined variable #{v}"
           exit 1
         end
+      elsif k == :fontset_name && !fontsets.keys.include?(v)
+        $stderr.puts "Undefined fontset: #{v}"
+        exit 1
       else
         s[k] = v
       end
