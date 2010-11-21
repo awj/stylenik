@@ -12,7 +12,6 @@ class Rule
 
   # node definitions and shortcuts
   def node(attrs)
-    $stderr.puts attrs.inspect
     n = Node.from_attrs attrs
     @nodes << n
   end
