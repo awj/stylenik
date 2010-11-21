@@ -38,7 +38,7 @@ class Rule
   def generate(map, xml)
     xml.Rule do
       xml.MaxScaleDenominator map.scales[start] unless start.nil?
-      xml.MinScaleDenominator map.scales[stop]  unless stop.nil?
+      xml.MinScaleDenominator map.scales[stop+1]  unless stop.nil?
       xml.Filter filter unless filter.nil?
 
       nodes.each do |n|
