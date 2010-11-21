@@ -20,6 +20,7 @@ class Node
   def generate_cssparams(map, xml)
     attrs(map).each do |k,v|
       n = k.to_s.gsub '_', '-'
+      v = v.join ', ' if v.is_a? Array
       xml.CssParameter({:name => n}, v)
     end
   end
