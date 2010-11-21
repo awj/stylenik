@@ -52,15 +52,18 @@ class TextSymbolizer < Node
 end
 
 class LineSymbolizer < Node
-  attr_accessor :stroke, :stroke_width, :stroke_opacity
+  attr_accessor :stroke, :stroke_width, :stroke_opacity, :stroke_linejoin, :stroke_linecap, :stroke_dasharray
   def initialize(attr)
     @type = :line
 
     @stroke = attr[:stroke]
     @stroke_width = attr[:stroke_width]
     @stroke_opacity = attr[:stroke_opacity]
-
-    @mapnik_attributes = [:stroke, :stroke_width, :stroke_opacity]
+    @stroke_linejoin = attr[:stroke_linejoin]
+    @stroke_linecap = attr[:stroke_linecap]
+    @stroke_dasharray = attr[:stroke_dasharray]
+    
+    @mapnik_attributes = [:stroke, :stroke_width, :stroke_opacity, :stroke_linejoin, :stroke_linecap, :stroke_dasharray]
   end
 
   def attrs(map=nil)
