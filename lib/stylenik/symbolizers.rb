@@ -26,17 +26,48 @@ end
 
 
 class TextSymbolizer < Node
-  attr_accessor :name, :fontset_name, :size, :fill, :halo_radius, :wrap_width
+  attr_accessor :avoid_edges, :allow_overlap, :character_spacing, :dx, :dy,
+  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill,
+  attr_accessor :horizontal_alignment, :justify_alignment, :label_position_tolerance,
+  attr_accessor :line_spacing, :max_char_angle_delta, :min_distance, :name, :opacity,
+  attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment,
+  attr_accessor :wrap_before, :wrap_character, :wrap_width
   def initialize(attr)
-    @name = attr[:name]
-    @fontset_name = attr[:fontset_name]
-    @size = attr[:size]
-    @fill = attr[:fill]
-    @halo_radius = attr[:halo_radius]
-    @wrap_width = attr[:wrap_width]
     @type = :text
-    @style = attr[:style]
-    @mapnik_attributes = [:name, :fontset_name, :size, :fill, :halo_radius, :wrap_width]
+    @mapnik_attributes = [:avoid_edges, :allow_overlap, :character_spacing, :dx, :dy,
+                          :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill,
+                          :horizontal_alignment, :justify_alignment, :label_position_tolerance,
+                          :line_spacing, :max_char_angle_delta, :min_distance, :name, :opacity,
+                          :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment,
+                          :wrap_before, :wrap_character, :wrap_width]
+
+    @avoid_edges = attr[:avoid_edges]
+    @allow_overlap = attr[:allow_overlap]
+    @character_spacing = attr[:character_spacing]
+    @dx = attr[:dx]
+    @dy = attr[:dy]
+    @face_name = attr[:face_name]
+    @fontset_name = attr[:fontset_name]
+    @fill = attr[:fill]
+    @force_odd_labels = attr[:force_odd_labels]
+    @halo_fill = attr[:halo_fill]
+    @horizontal_alignment = attr[:horizontal_alignment]
+    @justify_alignment = attr[:justify_alignment]
+    @label_position_tolerance = attr[:label_position_tolerance]
+    @line_spacing = attr[:line_spacing]
+    @max_char_angle_delta = attr[:max_char_angle_delta]
+    @min_distance = attr[:min_distance]
+    @name = attr[:name]
+    @opacity = attr[:opacity]
+    @placement = attr[:placement]
+    @size = attr[:size]
+    @spacing = attr[:spacing]
+    @text_convert = attr[:text_convert]
+    @text_ratio = attr[:text_ratio]
+    @vertical_alignment = attr[:vertical_alignment]
+    @wrap_before = attr[:wrap_before]
+    @wrap_character = attr[:wrap_character]
+    @wrap_width = attr[:wrap_width]
   end
 
   def attrs(map=nil)
