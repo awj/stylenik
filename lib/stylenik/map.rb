@@ -70,7 +70,7 @@ class Map
   def replace_vars(settings)
     s = {}
     settings.each do |k,v|
-      if (k != :type) && v.is_a?(Symbol)
+      if (k != :type && k != :fontset_name) && v.is_a?(Symbol)
         if var.has_key? v
           s[k] = var[v]
         else
