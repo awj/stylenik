@@ -73,6 +73,14 @@ class Layer
     shortcut_rule :line, attrs, block
   end
 
+  def polygon(attrs=nil, &block)
+    shortcut_rule :polygon, attrs, block
+  end
+
+  def shield(attrs=nil, &block)
+    shortcut_rule :shield, attrs, block
+  end
+
   def attrs(map)
     {
       :name   => name,

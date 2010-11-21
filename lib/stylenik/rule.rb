@@ -26,6 +26,14 @@ class Rule
     node(m)
   end
 
+  def polygon(attrs)
+    node({:type => :polygon}.merge attrs)
+  end
+
+  def shield(attrs)
+    node({:type => :shield}.merge attrs)
+  end
+
   def generate(map, xml)
     xml.Rule do
       xml.MaxScaleDenominator map.scales[start] unless start.nil?
