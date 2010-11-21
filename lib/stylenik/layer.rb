@@ -56,6 +56,8 @@ class Layer
           case type
           when :text then r.text(attrs)
           when :line then r.line(attrs)
+          when :polygon then r.polygon(attrs)
+          when :shield then r.shield(attrs)
           else raise "Style shortcut not implemented for #{type}"
           end
         end

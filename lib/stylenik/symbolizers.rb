@@ -12,18 +12,12 @@ class Node
   def attrs(map=nil)
     arr = {}
     @mapnik_attributes.each {|a| arr[a] = instance_variable_get("@#{a.to_s}") }
-    return arr
-  end
-
-  def attrs(map=nil)
-    a = super
-
-    res = apply_style(map, style, a)
+    res = apply_style(map, style, arr)
     return res.reject {|k,v| v.nil?}
   end
 
   def generate_cssparams(map, xml)
-    att.each do |k,v|
+    attrs(map).each do |k,v|
       n = k.to_s.gsub '_', '-'
       xml.CssParameter({:name => n}, v)
     end
@@ -50,13 +44,6 @@ class PolygonSymbolizer < Node
     @gamma = attr[:gamma]
   end
 
-  def attrs(map=nil)
-    a = super
-
-    res = apply_style(map, style, a)
-    return res.reject {|k,v| v.nil?}
-  end
-
   def generate(map, xml)
     xml.LineSymbolizer do
       generate_cssparams(map, xml)
@@ -70,11 +57,11 @@ class ShieldSymbolizer < Node
   # image attributes
   attr_accessor :base, :file, :height, :type, :width
   # text attributes
-  attr_accessor :character_spacing, :dx, :dy,
-  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill,
-  attr_accessor :horizontal_alignment, :justify_alignment, :label_position_tolerance,
+  attr_accessor :character_spacing, :dx, :dy
+  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill
+  attr_accessor :horizontal_alignment, :justify_alignment, :label_position_tolerance
   attr_accessor :line_spacing, :max_char_angle_delta, :min_distance, :name
-  attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment,
+  attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment
   attr_accessor :wrap_before, :wrap_character, :wrap_width
 
   def initialize(attrs)
@@ -132,11 +119,11 @@ class ShieldSymbolizer < Node
 end
 
 class TextSymbolizer < Node
-  attr_accessor :avoid_edges, :allow_overlap, :character_spacing, :dx, :dy,
-  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill,
-  attr_accessor :horizontal_alignment, :justify_alignment, :label_position_tolerance,
-  attr_accessor :line_spacing, :max_char_angle_delta, :min_distance, :name, :opacity,
-  attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment,
+  attr_accessor :avoid_edges, :allow_overlap, :character_spacing, :dx, :dy
+  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill
+  attr_accessor :horizontal_alignment, :justify_alignment, :label_position_tolerance
+  attr_accessor :line_spacing, :max_char_angle_delta, :min_distance, :name, :opacity
+  attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment
   attr_accessor :wrap_before, :wrap_character, :wrap_width
   def initialize(attr)
     @type = :text

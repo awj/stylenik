@@ -63,7 +63,7 @@ class Map
   end
 
   def shape(name, settings, &block)
-    new_set = {:type => :postgis}.merge settings
+    new_set = {:type => :shape}.merge settings
     gen_layer(name, new_set, block)
   end
 
