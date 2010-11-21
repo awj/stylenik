@@ -13,7 +13,8 @@ class Node
     arr = {}
     @mapnik_attributes.each {|a| arr[a] = instance_variable_get("@#{a.to_s}") }
     res = apply_style(map, style, arr)
-    return res.reject {|k,v| v.nil?}
+    filtered = res.reject {|k,v| v.nil?}
+    return map.replace_vars(filtered)
   end
 
   def generate_cssparams(map, xml)
@@ -45,7 +46,7 @@ class PolygonSymbolizer < Node
   end
 
   def generate(map, xml)
-    xml.LineSymbolizer do
+    xml.PolygonSymbolizer do
       generate_cssparams(map, xml)
     end
   end

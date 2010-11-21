@@ -4,12 +4,12 @@ require 'nokogiri'
 require 'stylenik/layer'
 
 class Map
-  attr_accessor :bgcolor, :srs, :buffer_size, :layers, :styles, :var, :scales, :fontsets
+  attr_accessor :bgcolor, :srs, :border_size, :layers, :styles, :var, :scales, :fontsets
 
   def initialize(attr)
     @bgcolor     = attr[:bgcolor]
     @srs         = attr[:srs]
-    @buffer_size = attr[:buffer_size].to_s
+    @border_size = attr[:border_size]
     @scales      = attr[:scales]
     @fontsets    = {}
     @styles      = {:text => {}, :polygon => {}, :line => {}, :point => {}, :shield => {}}
@@ -70,7 +70,16 @@ class Map
   def replace_vars(settings)
     s = {}
     settings.each do |k,v|
-      s[k] = var.has_key?(v) ? var[v] : v
+      if (k != :type) && v.is_a?(Symbol)
+        if var.has_key? v
+          s[k] = var[v]
+        else
+          $stderr.puts "Undefined variable #{v}"
+          exit 1
+        end
+      else
+        s[k] = v
+      end
     end
     s
   end
@@ -79,7 +88,7 @@ class Map
     {
       :bgcolor => bgcolor,
       :srs => srs,
-      :buffer_size => buffer_size
+      :border_size => border_size
     }
   end
 
