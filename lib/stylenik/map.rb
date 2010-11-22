@@ -70,28 +70,29 @@ class Map
   end
 
   # layer definitions and shortcuts
-  def gen_layer(name, settings, block)
+  def gen_layer(name, settings, block=nil)
     l = Layer.new name, settings
 
-    block.call l
+    block.call l unless block.nil?
 
     @layers << l
+    return l
   end
 
-  def layer(name, settings, &block)
-    gen_layer name, settings, block
+  def layer(name, settings={}, &block)
+    return gen_layer(name, settings, block)
   end
 
   def postgis(name, settings={}, &block)
     new_set = {:type => :postgis}.merge settings
     new_set[:table => name] if new_set[:table].nil?
-    gen_layer(name, new_set, block)
+    return gen_layer(name, new_set, block)
   end
 
-  def shape(name, settings, &block)
+  def shape(name, settings={}, &block)
     new_set = {:type => :shape}.merge settings
     new_set[:file] = name if new_set[:file].nil?
-    gen_layer(name, new_set, block)
+    return gen_layer(name, new_set, block)
   end
 
   def replace_vars(settings)
