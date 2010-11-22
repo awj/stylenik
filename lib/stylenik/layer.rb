@@ -19,19 +19,19 @@ class RuleMaker
     d.delete :start
     args[:type] ||= @type
     layer.rule(ruleattr) do |r|
-      r.node(d.merge args)
+      r.node d.merge(args)
     end
   end
 end
 
 class Layer
   attr_accessor :name, :status, :srs, :settings, :rules, :base_symbol
-  def initialize(name, the_settings)
-    @name = name
-    @settings = {}
+  def initialize(the_name, the_settings)
+    @name = the_name
+    @settings = Hash.new
     if the_settings[:base].is_a? Symbol
       @base_symbol = the_settings.delete :base
-      @settings    = {}
+      @settings    = Hash.new
     else
       @settings = the_settings.delete :base unless the_settings[:base].nil?
     end
@@ -110,26 +110,30 @@ class Layer
     return [name]
   end
 
+  def merge_postgis(map)
+    settings[:table] = name if settings[:table].nil?
+      
+    if base_symbol.nil?
+      new_set = map.default_database.merge settings
+      @settings = new_set
+    else
+      if map.databases[base_symbol].nil?
+        $stderr.puts "No database settings defined at #{base_symbol}, used by layer #{name}"
+        exit 1
+      else
+        new_settings = map.databases[base_symbol].merge settings
+        @settings = new_settings
+      end
+    end
+  end
+
   def generate(map, xml)
-    $stderr.puts "settings before generate: #{settings.inspect}"
     raise "Layer type is not defined" if not settings.keys.include? :type
     # fix up settings by merging the file path with relative file names
     settings[:file] = map.merge_path(settings[:file]) unless settings[:file].nil?
 
-#     if :postgis == settings[:type]
-#       if base_symbol.nil?
-#         settings = map.default_database.merge settings
-#       else
-#         if map.databases[base_symbol].nil?
-#           $stderr.puts "No database settings defined at #{base_symbol}, used by layer #{name}"
-#           exit 1
-#         else
-#           settings = map.databases[base_symbol].merge settings
-#         end
-#       end
-#     end
-
-    $stderr.puts "settings after cleanup: #{settings.inspect}"
+    merge_postgis(map) if settings[:type] == :postgis
+    
     att = attrs(map)
     # TODO generate styles
     stylenames = generate_styles(map, xml)
