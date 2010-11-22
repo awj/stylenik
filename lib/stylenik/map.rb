@@ -4,7 +4,7 @@ require 'nokogiri'
 require 'stylenik/layer'
 
 class Map
-  attr_accessor :bgcolor, :srs, :border_size, :layers, :styles, :var, :scales, :fontsets
+  attr_accessor :bgcolor, :srs, :border_size, :layers, :styles, :var, :scales, :fontsets, :databases
 
   def initialize(attr)
     @bgcolor     = attr[:bgcolor]
@@ -15,6 +15,7 @@ class Map
     @styles      = {:text => {}, :polygon => {}, :line => {}, :point => {}, :shield => {}}
     @layers      = []
     @var         = {}
+    @databases   = {}
   end
 
   def scales_between(start, stop=1.0, step_div=2.0)
@@ -33,6 +34,10 @@ class Map
 
   def fontset(settings)
     @fontsets = fontsets.merge settings
+  end
+
+  def database(settings)
+    @databases = databases.merge settings
   end
 
   # style templates
@@ -57,8 +62,25 @@ class Map
     gen_layer name, settings, block
   end
 
-  def postgis(name, settings, &block)
+  def postgis(name, settings={}, &block)
     new_set = {:type => :postgis}.merge settings
+    if settings[:base].nil?
+      if databases.size == 1
+        new_set[:base] = databases[databases.keys[0]]
+      else
+        $stderr.puts "No default database available for #{name} layer definition"
+        exit 1
+      end
+    else
+      if databases[settings[:base]].nil?
+        $stderr.puts "Named database setting: #{settings[:base]} is not defined for #{name} layer definition"
+        exit 1
+      else
+        if settings[:base].is_a? Symbol
+          new_set[:base] = databases[settings[:base]]
+        end
+      end
+    end
     new_set[:table => name] if new_set[:name].nil?
     gen_layer(name, new_set, block)
   end
