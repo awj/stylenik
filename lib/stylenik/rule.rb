@@ -27,11 +27,11 @@ class Rule
   end
 
   def polygon(attrs)
-    node({:type => :polygon}.merge attrs)
+    node({:type => :polygon}.merge(attrs))
   end
 
   def shield(attrs)
-    node({:type => :shield}.merge attrs)
+    node({:type => :shield}.merge(attrs))
   end
 
   def generate(map, xml)
