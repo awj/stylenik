@@ -93,13 +93,13 @@ class Map
         end
       end
     end
-    new_set[:table => name] if new_set[:name].nil?
+    new_set[:table => name] if new_set[:table].nil?
     gen_layer(name, new_set, block)
   end
 
   def shape(name, settings, &block)
     new_set = {:type => :shape}.merge settings
-    new_set[:file] = name if new_set[:name].nil?
+    new_set[:file] = name if new_set[:file].nil?
     new_set[:file] = merge_path new_set[:file]
     gen_layer(name, new_set, block)
   end
