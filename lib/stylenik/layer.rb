@@ -130,6 +130,7 @@ class Layer
   def generate(map, xml)
     raise "Layer type is not defined" if not settings.keys.include? :type
     # fix up settings by merging the file path with relative file names
+    $stderr.puts "Layer #{name} has no defined style rules" if rules.size == 0
     settings[:file] = map.merge_path(settings[:file]) unless settings[:file].nil?
 
     merge_postgis(map) if settings[:type] == :postgis
