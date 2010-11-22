@@ -10,7 +10,7 @@ class RuleMaker
 
   # reuse their stop argument if given
   def zoom(num, args={})
-    ruleattr = {:start => num, :stop => args[:stop] || num + 1, :filter => args[:filter] || @defaults[:filter]}
+    ruleattr = {:start => num, :stop => args[:stop] || num, :filter => args[:filter] || @defaults[:filter]}
     args.delete :stop
     args.delete :filter
     d = @defaults.clone
