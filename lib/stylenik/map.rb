@@ -59,11 +59,13 @@ class Map
 
   def postgis(name, settings, &block)
     new_set = {:type => :postgis}.merge settings
+    new_set[:table => name] if new_set[:name].nil?
     gen_layer(name, new_set, block)
   end
 
   def shape(name, settings, &block)
     new_set = {:type => :shape}.merge settings
+    new_set[:file => name] if new_set[:name].nil?
     gen_layer(name, new_set, block)
   end
 
