@@ -53,6 +53,60 @@ class PolygonSymbolizer < Node
   end
 end
 
+class PointSymbolizer < Node
+  attr_accessor :allow_overlap, :avoid_edges, :unlock_image, :opacity
+  attr_accessor :character_spacing, :dx, :dy
+  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill
+  attr_accessor :horizontal_alignment, :justify_alignment, :label_position_tolerance
+  attr_accessor :line_spacing, :max_char_angle_delta, :min_distance, :name
+  attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment
+  attr_accessor :wrap_before, :wrap_character, :wrap_width
+
+  def initialize(attrs)
+    @type = :point
+    @mapnik_attributes = [:allow_overlap, :avoid_edges, :unlock_image, :opacity,
+                          :character_spacing, :dx, :dy,
+                          :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill,
+                          :horizontal_alignment, :justify_alignment, :label_position_tolerance,
+                          :line_spacing, :max_char_angle_delta, :min_distance, :name,
+                          :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment,
+                          :wrap_before, :wrap_character, :wrap_width]
+
+    @allow_overlap = attrs[:allow_overlap]
+    @avoid_edges = attrs[:avoid_edges]
+    @unlock_image = attrs[:unlock_image]
+    @opacity = attrs[:opacity]
+    @character_spacing = attrs[:character_spacing]
+    @dx = attrs[:dx]
+    @dy = attrs[:dy]
+    @face_name = attrs[:face_name]
+    @fontset_name = attrs[:fontset_name]
+    @fill = attrs[:fill]
+    @force_odd_labels = attrs[:force_odd_labels]
+    @halo_fill = attrs[:halo_fill]
+    @horizontal_alignment = attrs[:horizontal_alignment]
+    @justify_alignment = attrs[:justify_alignment]
+    @label_position_tolerance = attrs[:label_position_tolerance]
+    @line_spacing = attrs[:line_spacing]
+    @max_char_angle_delta = attrs[:max_char_angle_delta]
+    @min_distance = attrs[:min_distance]
+    @name = attrs[:name]
+    @placement = attrs[:placement]
+    @size = attrs[:size]
+    @spacing = attrs[:spacing]
+    @text_convert = attrs[:text_convert]
+    @text_ratio = attrs[:text_ratio]
+    @vertical_alignment = attrs[:vertical_alignment]
+    @wrap_before = attrs[:wrap_before]
+    @wrap_character = attrs[:wrap_character]
+    @wrap_width = attrs[:wrap_width]
+  end
+
+  def generate(map, xml)
+    xml.PointSymbolizer(attrs(map))
+  end
+end
+
 class ShieldSymbolizer < Node
   # common attributes
   attr_accessor :allow_overlap, :avoid_edges, :unlock_image, :opacity
