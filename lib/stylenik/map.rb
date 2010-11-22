@@ -71,7 +71,7 @@ class Map
 
   # layer definitions and shortcuts
   def gen_layer(name, settings, block)
-    l = Layer.new name, replace_vars(settings)
+    l = Layer.new name, settings
 
     block.call l
 
@@ -107,6 +107,8 @@ class Map
       elsif k == :fontset_name && !fontsets.keys.include?(v)
         $stderr.puts "Undefined fontset: #{v}"
         exit 1
+      elsif k == :file
+        sk[k] = merge_path(v.to_s)
       else
         s[k] = v
       end
