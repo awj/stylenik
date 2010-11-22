@@ -3,7 +3,7 @@ require 'stylenik'
 
 m = Map.new :bgcolor => "rgb(255,255,255)", :srs => "+proj=latlong +datum=WGS84", :border_size => 128
 
-m.scales = [250000000000, 500000000, 200000000, 100000000, 50000000, 25000000, 12500000, 6500000, 3000000, 1500000, 750000, 400000, 200000, 100000, 50000, 25000, 12500, 5000, 2500]
+m.scales = [280000000, 140000000, 70000000, 35000000, 17500000, 8750000, 4375000, 2187500, 1093750, 546875, 273437, 136718, 68359, 34179, 17089, 8544, 4272, 2136, 1068, 534, 267, 133, 66, 33, 16, 8, 4, 2, 1]
 
 m.database(:default => {
              :host => 'localhost',
@@ -28,17 +28,17 @@ m.fontset :regular => ["Fontin Regular", "unifont Medium"]
 m.fontset :italic  => ["Fontin Italic", "unifont Medium"]
 m.fontset :bold    => ["Fontin Bold", "unifont Medium"]
 
-bathymetry = [["Nat_earth/10m-bath-0", "rgb(66,172,217)"],
-              ["Nat_earth/10m-bath-200", "rgb(65,170,214)"],
-              ["Nat_earth/10m-bath-1000", "rgb(64,168,211)"],
-              ["Nat_earth/10m-bath-2000", "rgb(63,166,208)"],
-              ["Nat_earth/10m-bath-3000", "rgb(62,164,205)"],
-              ["Nat_earth/10m-bath-4000", :water_color],
-              ["Nat_earth/10m-bath-5000", :water_color],
-              ["Nat_earth/10m-bath-6000", "rgb(60,160,199)"],
-              ["Nat_earth/10m-bath-7000", "rgb(59,158,196)"],
-              ["Nat_earth/10m-bath-8000", "rgb(58,156,193)"],
-              ["Nat_earth/10m-bath-9000", "rgb(57,154,190)"],
+bathymetry = [["Nat_earth/10m-bath-0",     "rgb(66,172,217)"],
+              ["Nat_earth/10m-bath-200",   "rgb(65,170,214)"],
+              ["Nat_earth/10m-bath-1000",  "rgb(64,168,211)"],
+              ["Nat_earth/10m-bath-2000",  "rgb(63,166,208)"],
+              ["Nat_earth/10m-bath-3000",  "rgb(62,164,205)"],
+              ["Nat_earth/10m-bath-4000",  :water_color],
+              ["Nat_earth/10m-bath-5000",  :water_color],
+              ["Nat_earth/10m-bath-6000",  "rgb(60,160,199)"],
+              ["Nat_earth/10m-bath-7000",  "rgb(59,158,196)"],
+              ["Nat_earth/10m-bath-8000",  "rgb(58,156,193)"],
+              ["Nat_earth/10m-bath-9000",  "rgb(57,154,190)"],
               ["Nat_earth/10m-bath-10000", "rgb(56,152,187)"]]
 
 bathymetry.each do |level|
@@ -47,17 +47,12 @@ bathymetry.each do |level|
   m.shape(file, :file => file) { |l| l.polygon :fill => color }
 end
 
-m.shape(:landmass, :file => "Nat_earth/10m-land") do |l|
-  l.polygon :start => 0, :stop => 6, :fill => :landmass_color
-end
+m.shape("Nat_earth/10m-land").polygon(:start => 0, :stop => 6, :fill => :landmass_color)
+m.shape("Nat_earth/10m-land-uglytest")
 
-m.shape(:landmass_rest, :file => "4326/processed_p_4326_d") do |l|
-  l.polygon :start => 6, :fill => :landmass_color
-end
+m.shape("4326/processed_p_4326_d").polygon(:start => 6, :fill => :landmass_color)
 
-m.shape(:islands, :file => "Nat_earth/10m-islands") do |l|
-  l.polygon :start => 5, :stop => 7, :fill => :landmass_color
-end
+m.shape("Nat_earth/10m-islands").polygon(:start => 5, :stop => 7, :fill => :landmass_color)
 
 m.postgis(:highways, :table =>
           "(select way, name from roads_line where highway = 'motorway') as highways") do |l|
@@ -66,21 +61,7 @@ m.postgis(:highways, :table =>
          :stroke_linejoin => 'round', :stroke_linecap => 'round')
 end
 
-m.shape(:urban, :file => "Nat_earth/10m-urban") do |l|
-  l.polygon :start => 8, :stop => 10, :fill => :urban_land, :fill_opacity => 0.5
-end
-
-# m.postgis(:health_ed, :table => "health_education_polygon") do |l|
-# end
-
-# m.postgis(:attractions, :table => "attractions_polygon") do |l|
-# end
-
-# m.postgis(:parks, :table => "parks_polygon") do |l|
-# end
-
-# m.postgis(:schools, :table => "schools_polygon") do |l|
-# end
+m.shape("Nat_earth/10m-urban").polygon(:start => 8, :stop => 10, :fill => :urban_land, :fill_opacity => 0.5)
 
 filter = "[COUNTRYNAM]='US' or [COUNTRYNAM]='Russia' or [COUNTRYNAM]='Australia' or [COUNTRYNAM]='Canada' or [COUNTRYNAM]='China' or [COUNTRYNAM]='Brazil'"
 m.shape(:selected_states, :file => "Nat_earth/10m-admin1") do |l|
@@ -103,20 +84,7 @@ m.postgis(:admin_boundaries_line) do |l|
   end
 end
 
-# m.shape(:lakes, :file => "Nat_earth/10m-lakes") do |l|
-# end
-
-# m.shape(:admin, :file => "Nat_earth/10m-admin0") do |l|
-# end
-
-# m.shape(:rivers_110, :file => "Nat_earth/110m-rivers") do |l|
-# end
-
-# m.shape(:rivers_50, :file => "Nat_earth/50m-rivers") do |l|
-# end
-
-# m.shape(:rivers_10, :file => "Nat_earth/10m-rivers") do |l|
-# end
+m.shape("Nat_earth/10m-lakes").polygon(:start => 0, :stop => 6, :fill => :water_color)
 
 m.postgis(:ocean_labels, :table => 'ocean_labels') do |l|
   l.text(:name => 'name', :fontset_name => :italic, :opacity => 0.8, :fill => :text_color, :size => 20) do |r|
@@ -124,22 +92,6 @@ m.postgis(:ocean_labels, :table => 'ocean_labels') do |l|
     r.zoom 3
   end
 end
-
-# m.postgis(:water_areas, :table => "small_water_poly") do |l|
-# end
-
-# m.postgis(:water_lines, :table => "water_lines") do |l|
-# end
-
-# m.postgis(:all_roads, :table => "roads_line") do |l|
-# end
-
-# m.postgis(:aeroways, :table => "aeroway_line") do |l|
-# end
-
-# t = "(select way, name from roads_line where highway = 'motorway' or highway = 'trunk' or highway = 'motorway_link' or highway = 'trunk_link') as highways"
-# m.postgis(:highways, :table => t) do |l|
-# end
 
 table = "(select way,name from location_labels where place = 'country' order by population desc, z_order desc) as continents"
 m.postgis(:country_labels, :table => table) do |l|
