@@ -4,7 +4,7 @@ require 'nokogiri'
 require 'stylenik/layer'
 
 class Map
-  attr_accessor :bgcolor, :srs, :border_size, :layers, :styles, :var, :scales, :fontsets, :databases
+  attr_accessor :bgcolor, :srs, :border_size, :layers, :styles, :var, :scales, :fontsets, :databases, :file_path
 
   def initialize(attr)
     @bgcolor     = attr[:bgcolor]
@@ -34,6 +34,18 @@ class Map
 
   def fontset(settings)
     @fontsets = fontsets.merge settings
+  end
+
+  # merge any non-root names with the defined file path
+  def merge_path(name)
+    return name if name.to_s.match(/^\/|([A-Za-z]:)/)
+
+    if file_path.nil?
+      $stderr.puts "File path is not defined, used for completion of #{name}"
+      exit 1
+    end
+    
+    return File.join(file_path, name.to_s)
   end
 
   def database(settings)
@@ -87,7 +99,8 @@ class Map
 
   def shape(name, settings, &block)
     new_set = {:type => :shape}.merge settings
-    new_set[:file => name] if new_set[:name].nil?
+    new_set[:file] = name if new_set[:name].nil?
+    new_set[:file] = merge_path new_set[:file]
     gen_layer(name, new_set, block)
   end
 
