@@ -108,6 +108,9 @@ class Layer
 
   def generate(map, xml)
     raise "Layer type is not defined" if not settings.keys.include? :type
+    # fix up settings by merging the file path with relative file names
+    settings[:file] = map.merge_path(settings[:file]) unless settings[:file].nil?
+
     att = attrs(map)
     # TODO generate styles
     stylenames = generate_styles(map, xml)
@@ -115,7 +118,6 @@ class Layer
       stylenames.each do |n|
         xml.StyleName n
       end
-
       xml.Datasource do
         settings.each { |k,v| xml.Parameter({:name => k},v) }
       end
