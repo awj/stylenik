@@ -25,15 +25,19 @@ class RuleMaker
 end
 
 class Layer
-  attr_accessor :name, :status, :srs, :settings, :rules
+  attr_accessor :name, :status, :srs, :settings, :rules, :base_symbol
   def initialize(name, the_settings)
     @name = name
     @settings = {}
-    @settings = the_settings.delete :base unless the_settings[:base].nil?
+    if the_settings[:base].is_a? Symbol
+      @base_symbol = the_settings.delete :base
+      @settings    = {}
+    else
+      @settings = the_settings.delete :base unless the_settings[:base].nil?
+    end
     @status   = the_settings.delete(:status) || "on"
     @srs      = the_settings.delete :srs
     @settings = @settings.merge the_settings
-
     @rules = []
   end
 
@@ -107,10 +111,25 @@ class Layer
   end
 
   def generate(map, xml)
+    $stderr.puts "settings before generate: #{settings.inspect}"
     raise "Layer type is not defined" if not settings.keys.include? :type
     # fix up settings by merging the file path with relative file names
     settings[:file] = map.merge_path(settings[:file]) unless settings[:file].nil?
 
+#     if :postgis == settings[:type]
+#       if base_symbol.nil?
+#         settings = map.default_database.merge settings
+#       else
+#         if map.databases[base_symbol].nil?
+#           $stderr.puts "No database settings defined at #{base_symbol}, used by layer #{name}"
+#           exit 1
+#         else
+#           settings = map.databases[base_symbol].merge settings
+#         end
+#       end
+#     end
+
+    $stderr.puts "settings after cleanup: #{settings.inspect}"
     att = attrs(map)
     # TODO generate styles
     stylenames = generate_styles(map, xml)

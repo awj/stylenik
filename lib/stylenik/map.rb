@@ -52,6 +52,14 @@ class Map
     @databases = databases.merge settings
   end
 
+  def default_database
+    if databases.size == 1
+      return databases.values.first
+    else
+      return {}
+    end
+  end
+
   # style templates
   def text(name, attrs)
     @styles[:text][name] = attrs
@@ -76,23 +84,6 @@ class Map
 
   def postgis(name, settings={}, &block)
     new_set = {:type => :postgis}.merge settings
-    if settings[:base].nil?
-      if databases.size == 1
-        new_set[:base] = databases[databases.keys[0]]
-      else
-        $stderr.puts "No default database available for #{name} layer definition"
-        exit 1
-      end
-    else
-      if databases[settings[:base]].nil?
-        $stderr.puts "Named database setting: #{settings[:base]} is not defined for #{name} layer definition"
-        exit 1
-      else
-        if settings[:base].is_a? Symbol
-          new_set[:base] = databases[settings[:base]]
-        end
-      end
-    end
     new_set[:table => name] if new_set[:table].nil?
     gen_layer(name, new_set, block)
   end
