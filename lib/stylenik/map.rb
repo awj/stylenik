@@ -109,7 +109,7 @@ class Map
         $stderr.puts "Undefined fontset: #{v}"
         exit 1
       elsif k == :file
-        sk[k] = merge_path(v.to_s)
+        s[k] = merge_path(v.to_s)
       else
         s[k] = v
       end
