@@ -176,7 +176,7 @@ end
 
 class TextSymbolizer < Node
   attr_accessor :avoid_edges, :allow_overlap, :character_spacing, :dx, :dy
-  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill
+  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill, :halo_radius
   attr_accessor :horizontal_alignment, :justify_alignment, :label_position_tolerance
   attr_accessor :line_spacing, :max_char_angle_delta, :min_distance, :name, :opacity
   attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment
@@ -184,7 +184,7 @@ class TextSymbolizer < Node
   def initialize(attr)
     @type = :text
     @mapnik_attributes = [:avoid_edges, :allow_overlap, :character_spacing, :dx, :dy,
-                          :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill,
+                          :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill, :halo_radius,
                           :horizontal_alignment, :justify_alignment, :label_position_tolerance,
                           :line_spacing, :max_char_angle_delta, :min_distance, :name, :opacity,
                           :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment,
@@ -200,6 +200,7 @@ class TextSymbolizer < Node
     @fill = attr[:fill]
     @force_odd_labels = attr[:force_odd_labels]
     @halo_fill = attr[:halo_fill]
+    @halo_radius = attr[:halo_radius]
     @horizontal_alignment = attr[:horizontal_alignment]
     @justify_alignment = attr[:justify_alignment]
     @label_position_tolerance = attr[:label_position_tolerance]
@@ -220,6 +221,9 @@ class TextSymbolizer < Node
   end
 
   def generate(map, xml)
+    if name.nil?
+      raise "You have a text symbolizer with no name ... hurr durr I'm super helpful"
+    end
     xml.TextSymbolizer(attrs(map))
   end
 end
@@ -256,6 +260,7 @@ class Node
     when :line then LineSymbolizer.new attr
     when :polygon then PolygonSymbolizer.new attr
     when :shield then ShieldSymbolizer.new attr
+    when :point then PointSymbolizer.new attr
     else raise "Style type is not recognized: #{type}"
     end
   end

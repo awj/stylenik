@@ -1,25 +1,38 @@
 require 'stylenik/rule'
 
 class RuleMaker
-  attr_accessor :type, :layer, :defaults
+  attr_accessor :type, :layer, :defaults, :last
   def initialize(type, layer, defaults={})
     @type  = type
     @layer = layer
     @defaults = defaults
+    @last = nil
   end
 
   # reuse their stop argument if given
-  def zoom(num, args={})
-    ruleattr = {:start => num, :stop => args[:stop] || num, :filter => args[:filter] || @defaults[:filter]}
-    args.delete :stop
-    args.delete :filter
-    d = @defaults.clone
-    d.delete :filter
-    d.delete :stop
-    d.delete :start
-    args[:type] ||= @type
-    layer.rule(ruleattr) do |r|
-      r.node d.merge(args)
+  def zoom(num, ruleargs={}, nodeargs=nil)
+    if nodeargs.nil?
+      args = ruleargs
+      ruleattr = {:start => num, :stop => args[:stop] || num, :filter => args[:filter] || @defaults[:filter]}
+      args.delete :stop
+      args.delete :filter
+      d = @defaults.clone
+      d.delete :filter
+      d.delete :stop
+      d.delete :start
+      args[:type] ||= @type
+      layer.rule(ruleattr) do |r|
+        r.node d.merge(args)
+      end
+    else
+      ruleattr = {:start => num, :stop => ruleargs[:stop] || num, :filter => ruleargs[:filter] || @defaults[:filter]}
+      layer.rule(ruleattr) do |r|
+        nodeargs.each do |n|
+          d = @defaults.clone
+          n[:type] ||= @type
+          r.node d.merge(n)
+        end
+      end
     end
   end
 end
@@ -67,6 +80,7 @@ class Layer
         when :line then r.line(attrs)
         when :polygon then r.polygon(attrs)
         when :shield then r.shield(attrs)
+        when :point then r.point(attrs)
         else raise "Style shortcut not implemented for #{type}"
         end
       end
@@ -92,6 +106,10 @@ class Layer
     shortcut_rule :shield, attrs, block
   end
 
+  def point(attrs={}, &block)
+    shortcut_rule :point, attrs, block
+  end
+
   def attrs(map)
     {
       :name   => name,
@@ -112,7 +130,7 @@ class Layer
 
   def merge_postgis(map)
     settings[:table] = name if settings[:table].nil?
-      
+    
     if base_symbol.nil?
       new_set = map.default_database.merge settings
       @settings = new_set
