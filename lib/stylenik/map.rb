@@ -84,13 +84,13 @@ class Map
   end
 
   def postgis(name, settings={}, &block)
-    new_set = {:type => :postgis}.merge settings
+    new_set = {:symbolizer_type => :postgis}.merge settings
     new_set[:table => name] if new_set[:table].nil?
     return gen_layer(name, new_set, block)
   end
 
   def shape(name, settings={}, &block)
-    new_set = {:type => :shape}.merge settings
+    new_set = {:symbolizer_type => :shape}.merge settings
     new_set[:file] = name if new_set[:file].nil?
     return gen_layer(name, new_set, block)
   end
@@ -98,7 +98,7 @@ class Map
   def replace_vars(settings)
     s = {}
     settings.each do |k,v|
-      if (k != :type && k != :fontset_name) && v.is_a?(Symbol)
+      if (k != :symbolizer_type && k != :fontset_name) && v.is_a?(Symbol)
         if var.has_key? v
           s[k] = var[v]
         else

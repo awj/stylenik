@@ -17,25 +17,25 @@ class Rule
   end
 
   def text(attrs)
-    m = {:type => :text}.merge attrs
+    m = {:symbolizer_type => :text}.merge attrs
     node(m)
   end
 
   def line(attrs)
-    m = {:type => :line}.merge attrs
+    m = {:symbolizer_type => :line}.merge attrs
     node(m)
   end
 
   def polygon(attrs)
-    node({:type => :polygon}.merge(attrs))
+    node({:symbolizer_type => :polygon}.merge(attrs))
   end
 
   def point(attrs)
-    node({:type => :point}.merge(attrs))
+    node({:symbolizer_type => :point}.merge(attrs))
   end
 
   def shield(attrs)
-    node({:type => :shield}.merge(attrs))
+    node({:symbolizer_type => :shield}.merge(attrs))
   end
 
   def generate(map, xml)

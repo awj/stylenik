@@ -1,9 +1,9 @@
 require 'stylenik/rule'
 
 class RuleMaker
-  attr_accessor :type, :layer, :defaults, :last
-  def initialize(type, layer, defaults={})
-    @type  = type
+  attr_accessor :symbolizer_type, :layer, :defaults, :last
+  def initialize(symbolizer_type, layer, defaults={})
+    @symbolizer_type  = symbolizer_type
     @layer = layer
     @defaults = defaults
     @last = nil
@@ -20,7 +20,7 @@ class RuleMaker
       d.delete :filter
       d.delete :stop
       d.delete :start
-      args[:type] ||= @type
+      args[:symbolizer_type] ||= @symbolizer_type
       layer.rule(ruleattr) do |r|
         r.node d.merge(args)
       end
@@ -29,7 +29,7 @@ class RuleMaker
       layer.rule(ruleattr) do |r|
         nodeargs.each do |n|
           d = @defaults.clone
-          n[:type] ||= @type
+          n[:symbolizer_type] ||= @symbolizer_type
           r.node d.merge(n)
         end
       end
@@ -67,7 +67,7 @@ class Layer
     gen_rule filters, block
   end
 
-  def shortcut_rule(type, attrs, block)
+  def shortcut_rule(symbolizer_type, attrs, block)
 
     if block.nil?
       ruleset = {}
@@ -75,17 +75,17 @@ class Layer
       ruleset[:stop]   = attrs.delete :stop
       ruleset[:filter] = attrs.delete :filter
       rule(ruleset) do |r|
-        case type
+        case symbolizer_type
         when :text then r.text(attrs)
         when :line then r.line(attrs)
         when :polygon then r.polygon(attrs)
         when :shield then r.shield(attrs)
         when :point then r.point(attrs)
-        else raise "Style shortcut not implemented for #{type}"
+        else raise "Style shortcut not implemented for #{symbolizer_type}"
         end
       end
     else
-      r = RuleMaker.new type, self, attrs
+      r = RuleMaker.new symbolizer_type, self, attrs
       block.call r
     end
   end
@@ -146,13 +146,15 @@ class Layer
   end
 
   def generate(map, xml)
-    raise "Layer type is not defined" if not settings.keys.include? :type
+    raise "Layer type is not defined" if not settings.keys.include? :symbolizer_type
     # fix up settings by merging the file path with relative file names
     $stderr.puts "Layer #{name} has no defined style rules" if rules.size == 0
     settings[:file] = map.merge_path(settings[:file]) unless settings[:file].nil?
 
-    merge_postgis(map) if settings[:type] == :postgis
+    merge_postgis(map) if settings[:symbolizer_type] == :postgis
     
+    settings[:type] = settings.delete :symbolizer_type
+
     att = attrs(map)
     # TODO generate styles
     stylenames = generate_styles(map, xml)

@@ -1,6 +1,6 @@
 # base properties/methods for all symbolizers
 class Node
-  attr_accessor :style, :mapnik_attributes
+  attr_accessor :style, :mapnik_attributes, :symbolizer_type
   def initialize(attr)
     @mapnik_attributes = []
   end
@@ -26,8 +26,8 @@ class Node
   end
 
   def apply_style(map, name, bonus_attrs)
-    raise "Someone forgot to provide a type tag for this symbolizer, #{self}" if @type.nil?
-    res = map.styles[@type][name] || {}
+    raise "Someone forgot to provide a type tag for this symbolizer, #{self}" if @symbolizer_type.nil?
+    res = map.styles[@symbolizer_type][name] || {}
     filtered_attrs = bonus_attrs.reject {|k,v| v.nil?}
     filtered_res   = res.reject {|k,v| v.nil?}
     return filtered_res.merge(filtered_attrs)
@@ -38,7 +38,7 @@ class PolygonSymbolizer < Node
   attr_accessor :fill, :fill_opacity, :gamma
 
   def initialize(attr)
-    @type = :polygon
+    @symbolizer_type = :polygon
     @mapnik_attributes = [:fill, :fill_opacity, :gamma]
 
     @fill = attr[:fill]
@@ -63,7 +63,7 @@ class PointSymbolizer < Node
   attr_accessor :wrap_before, :wrap_character, :wrap_width
 
   def initialize(attrs)
-    @type = :point
+    @symbolizer_type = :point
     @mapnik_attributes = [:allow_overlap, :avoid_edges, :unlock_image, :opacity,
                           :character_spacing, :dx, :dy,
                           :face_name, :fontset_name, :file, :fill, :force_odd_labels, :halo_fill,
@@ -121,8 +121,8 @@ class ShieldSymbolizer < Node
   attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment
   attr_accessor :wrap_before, :wrap_character, :wrap_width
 
-  def initialize(attrs)
-    @type = :shield
+  def initialize(attr)
+    @symbolizer_type = :shield
     @mapnik_attributes = [:allow_overlap, :avoid_edges, :unlock_image,
                           :opacity, :base, :file, :height, :type, :width,
                           :character_spacing, :dx, :dy, :face_name,
@@ -183,7 +183,7 @@ class TextSymbolizer < Node
   attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment
   attr_accessor :wrap_before, :wrap_character, :wrap_width
   def initialize(attr)
-    @type = :text
+    @symbolizer_type = :text
     @mapnik_attributes = [:avoid_edges, :allow_overlap, :character_spacing, :dx, :dy,
                           :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill, :halo_radius,
                           :horizontal_alignment, :justify_alignment, :label_position_tolerance,
@@ -232,7 +232,7 @@ end
 class LineSymbolizer < Node
   attr_accessor :stroke, :stroke_width, :stroke_opacity, :stroke_linejoin, :stroke_linecap, :stroke_dasharray
   def initialize(attr)
-    @type = :line
+    @symbolizer_type = :line
 
     @stroke = attr[:stroke]
     @stroke_width = attr[:stroke_width]
@@ -255,14 +255,14 @@ end
 class Node
   # pick the appropriate class for the given node type
   def self.from_attrs(attr)
-    type = attr.delete :type
-    case type
+    symbolizer_type = attr.delete :symbolizer_type
+    case symbolizer_type
     when :text then TextSymbolizer.new attr
     when :line then LineSymbolizer.new attr
     when :polygon then PolygonSymbolizer.new attr
     when :shield then ShieldSymbolizer.new attr
     when :point then PointSymbolizer.new attr
-    else raise "Style type is not recognized: #{type}"
+    else raise "Style type is not recognized: #{symbolizer_type}"
     end
   end
 end
