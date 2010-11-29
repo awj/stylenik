@@ -59,6 +59,14 @@ class Layer
     @rules = []
   end
 
+  # group up common options that are shared between style types
+  def with(filters, &block)
+    temp_settings = settings.clone
+    @settings = @settings.merge filters
+    block.call self
+    @settings = temp_settings
+  end
+
   # rule definitions and shortcuts
   def gen_rule(filters, block)
     r = Rule.new filters
