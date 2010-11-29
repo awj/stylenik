@@ -9,6 +9,11 @@ class RuleMaker
     @last = nil
   end
 
+  def with(args={}, &block)
+    @defaults = defaults.merge args
+    block.call(self)
+  end
+
   # reuse their stop argument if given
   def zoom(num, ruleargs={}, nodeargs=nil)
     if nodeargs.nil?
