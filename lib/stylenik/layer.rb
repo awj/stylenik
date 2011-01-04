@@ -69,7 +69,7 @@ class Layer
 
   # rule definitions and shortcuts
   def gen_rule(filters, block)
-    r = Rule.new filters
+    r = Rule.new (@settings.clone.merge filters)
 
     block.call r
 
