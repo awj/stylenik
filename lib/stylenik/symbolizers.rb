@@ -115,7 +115,7 @@ class ShieldSymbolizer < Node
   attr_accessor :base, :file, :height, :type, :width
   # text attributes
   attr_accessor :character_spacing, :dx, :dy
-  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill
+  attr_accessor :face_name, :fontset_name, :fill, :force_odd_labels, :halo_fill, :halo_radius
   attr_accessor :horizontal_alignment, :justify_alignment, :label_position_tolerance
   attr_accessor :line_spacing, :max_char_angle_delta, :min_distance, :name
   attr_accessor :placement, :size, :spacing, :text_convert, :text_ratio, :vertical_alignment
@@ -126,7 +126,7 @@ class ShieldSymbolizer < Node
     @mapnik_attributes = [:allow_overlap, :avoid_edges, :unlock_image,
                           :opacity, :base, :file, :height, :type, :width,
                           :character_spacing, :dx, :dy, :face_name,
-                          :fontset_name, :fill, :force_odd_labels, :halo_fill,
+                          :fontset_name, :fill, :force_odd_labels, :halo_fill, :halo_radius
                           :horizontal_alignment, :justify_alignment,
                           :label_position_tolerance, :line_spacing,
                           :max_char_angle_delta, :min_distance, :name,
